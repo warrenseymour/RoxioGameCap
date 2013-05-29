@@ -8,9 +8,6 @@ using DirectShowLib;
 
 namespace RoxioGameCap {
     class GraphManager {
-
-        //[DllImport("ole32.dll")]
-
         private FilterGraph graph;
         private IVideoWindow videoWindow;
 
