@@ -3,6 +3,8 @@ RoxioGameCap
 
 A no-frills recording tool for the Roxio GameCap HD PRO.
 
+[Download the latest release](https://github.com/warrenseymour/RoxioGameCap/raw/master/Releases/latest.zip)
+
 About
 -----
 
