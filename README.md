@@ -34,7 +34,8 @@ Planned Features
 Requirements
 ------------
 
-The bundled software and drivers must be installed, but it is *not* necessary to have the bundled capture software running whilst using this tool.
+- .NET Framework version 4.0
+- The bundled software and drivers must be installed, but it is *not* necessary to have the bundled capture software running whilst using this tool.
 
 Building
 --------
