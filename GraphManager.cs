@@ -9,7 +9,6 @@ using DirectShowLib;
 namespace RoxioGameCap {
     class GraphManager {
         private FilterGraph graph;
-        private IVideoWindow videoWindow;
 
         public GraphManager() {
             this.graph = new FilterGraph();
