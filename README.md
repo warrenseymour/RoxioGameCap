@@ -3,7 +3,7 @@ RoxioGameCap
 
 A no-frills recording tool for the Roxio GameCap HD PRO.
 
-[Download the latest release](https://github.com/warrenseymour/RoxioGameCap/raw/master/Releases/latest.zip)
+[Download the latest release](https://github.com/warrenseymour/RoxioGameCap/raw/master/Releases/RoxioGameCap-latest.zip)
 
 About
 -----
@@ -18,16 +18,18 @@ Current Features
 ----------------
 
 - Preview decoded capture stream
+- Record capture stream to an M2TS file on disk
 
 Current Limitations
 -------------------
 
 - Only supports HDMI 1080p input
+- Manual configuration of recording directory
 
 Planned Features
 ----------------
 
-- Record capture stream to disk
+- User-friendly recording configuration
 - Livestream to Twitch.tv
 - Disable preview during record/livestream (to save CPU)
 - Record and livestream simultaneously
@@ -38,6 +40,7 @@ Requirements
 
 - .NET Framework version 4.0
 - The bundled software and drivers must be installed, but it is *not* necessary to have the bundled capture software running whilst using this tool.
+- RoxioGameCap.exe.config must be configured manually. Change the contents of the `<value>` node under `<RoxioGameCap.Properties.Settings>` to the directory you wish to save your recordings to. Remember to use double-slashes in the path as well as a trailing double-slash.
 
 Building
 --------
