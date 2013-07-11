@@ -11,8 +11,6 @@ namespace RoxioGameCap {
     public partial class mainWindow : Form {
         private GraphManager captureGraph;
         private bool isRecording = false;
-        private string recordingDirectory = "c:\\temp\\";
-        private string recordingFilename = "recording.m2ts";
 
         public mainWindow() {
             InitializeComponent();
@@ -51,9 +49,10 @@ namespace RoxioGameCap {
         }
 
         private void startRecording() {
-            this.recordingFilename = DateTime.Now.ToString("yyyy-MM-dd-HH-ss") + ".m2ts";
+            string recordingDirectory = Properties.Settings.Default.RecordingDirectory;
+            string recordingFilename = DateTime.Now.ToString("yyyy-MM-dd-HH-ss") + ".m2ts";
 
-            string filename = this.recordingDirectory + this.recordingFilename;
+            string filename = recordingDirectory + recordingFilename;
 
             this.isRecording = true;
             this.labelRecordingStatus.Text = "Status: Recording";
