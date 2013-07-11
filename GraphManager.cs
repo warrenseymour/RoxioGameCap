@@ -61,6 +61,38 @@ namespace RoxioGameCap {
             }
         }
 
+        public void stopFileWriter() {
+            int hr = 0;
+            IBaseFilter fileWriter = this.findFilter("File Writer");
+
+            this.stop();
+
+            hr = (this.graph as IFilterGraph).RemoveFilter(fileWriter);
+            checkHR(hr, "Couldn't remove file writer");
+
+            this.run();
+        }
+
+        public void startFileWriter(string fileName) {
+            int hr = 0;
+            Guid fileWriterGuid = new Guid("B858031F-C578-4FDA-B8FE-7444EFD81A65");
+            IBaseFilter fileWriter = Activator.CreateInstance(Type.GetTypeFromCLSID(fileWriterGuid)) as IBaseFilter;
+            IBaseFilter tee = this.findFilter("Infinite Pin Tee Filter");
+
+            this.stop();
+
+            hr = (this.graph as IFilterGraph).AddFilter(fileWriter, "File Writer");
+            checkHR(hr, "Couldn't add file writer to graph");
+
+            hr = (fileWriter as IFileSinkFilter).SetFileName(fileName, null);
+            checkHR(hr, "Couldn't set filename on file writer");
+
+            hr = (this.graph as IFilterGraph).ConnectDirect(this.findPin(tee, "Output2"), this.findPin(fileWriter, "Input"), null);
+            checkHR(hr, "Couldn't connect tee output to file writer input");
+
+            this.run();
+        }
+
         private IVideoWindow getVideoWindow() {
             return this.graph as IVideoWindow;
         }
@@ -90,12 +122,74 @@ namespace RoxioGameCap {
             return this.graph as IMediaControl;
         }
 
+        private IBaseFilter findFilter(string name) {
+            int hr = 0;
+
+            IEnumFilters eFilters = null;
+            hr = (this.graph as IGraphBuilder).EnumFilters(out eFilters);
+            checkHR(hr, "Couldn't enumerate filters in graph");
+
+            IntPtr pFiltersFetched = Marshal.AllocCoTaskMem(4);
+            IBaseFilter[] pFilter = new IBaseFilter[1];
+
+            while (eFilters.Next(1, pFilter, pFiltersFetched) == 0) {
+                FilterInfo pInfo;
+                pFilter[0].QueryFilterInfo(out pInfo);
+                bool found = (pInfo.achName == name);
+
+                if (found) {
+                    return pFilter[0];
+                }
+            }
+
+            return null;
+        }
+
+        private IPin findPin(IBaseFilter filter, string pinName) {
+            IEnumPins ePins;
+            int hr = 0;
+
+            hr = filter.EnumPins(out ePins);
+            checkHR(hr, "Couldn't enumerate pins on filter");
+            IntPtr fetched = Marshal.AllocCoTaskMem(4);
+            IPin[] pins = new IPin[1];
+            while (ePins.Next(1, pins, fetched) == 0) {
+                PinInfo pinInfo;
+                pins[0].QueryPinInfo(out pinInfo);
+                bool found = (pinInfo.name == pinName);
+                DsUtils.FreePinInfo(pinInfo);
+
+                if (found) {
+                    return pins[0];
+                }
+            }
+
+            checkHR(-1, "Couldn't find pin `" + pinName + "`");
+            return null;
+        }
+
         public void run() {
-            this.getMediaControl().Run();
+            int hr = 0;
+            FilterState filterStates;
+
+            hr = this.getMediaControl().GetState(1000, out filterStates);
+            checkHR(hr, "Couldn't get graph state");
+
+            hr = this.getMediaControl().Run();
+            checkHR(hr, "Couldn't run graph");
         }
 
         public void stop() {
-            this.getMediaControl().Stop();
+            int hr = 0;
+            hr = this.getMediaControl().Stop();
+            checkHR(hr, "Couldn't stop graph");
+        }
+
+        private static void checkHR(int hr, string msg) {
+            if (hr < 0) {
+                Console.WriteLine("Error: " + msg);
+                DsError.ThrowExceptionForHR(hr);
+            }
         }
     }
 
